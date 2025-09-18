@@ -2,9 +2,10 @@
 	"name": "express-template",
 	"version": "1.0.0",
 	"main": "index.js",
+	"type": "module",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"dev": "node --watch app.js",
+		"dev": "node --watch src/index.js",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
 		"format": "prettier --write .",
@@ -28,13 +29,15 @@
 		"@eslint/js": "^9.32.0",
 		"@eslint/json": "^0.13.1",
 		"@eslint/markdown": "^7.1.0",
-		"dotenv": "^17.2.1",
 		"eslint": "^9.32.0",
 		"eslint-config-prettier": "^10.1.8",
 		"globals": "^16.3.0",
 		"prettier": "3.6.2"
 	},
 	"dependencies": {
+		"cookie-parser": "^1.4.7",
+		"cors": "^2.8.5",
+		"dotenv": "^17.2.2",
 		"ejs": "^3.1.10",
 		"express": "^5.1.0",
 		"express-validator": "^7.2.1",

@@ -1,93 +1,94 @@
-import js from '@eslint/js';
-import globals from 'globals';
-import json from '@eslint/json';
-import markdown from '@eslint/markdown';
-import css from '@eslint/css';
-import prettierConfig from 'eslint-config-prettier';
+import js from "@eslint/js";
+import globals from "globals";
+import json from "@eslint/json";
+import markdown from "@eslint/markdown";
+import css from "@eslint/css";
+import prettierConfig from "eslint-config-prettier";
 
 export default [
 	// Global ignores
 	{
 		ignores: [
-			'node_modules/**',
-			'build/**',
-			'dist/**',
-			'coverage/**',
-			'.nyc_output/**',
-			'*.log',
-			'logs/**',
-			'.DS_Store',
-			'Thumbs.db',
-			'.env*',
-			'.vscode/**',
-			'.idea/**',
-			'*.swp',
-			'*.swo',
-			'*~',
-			'package-lock.json',
-			'yarn.lock',
-			'pnpm-lock.yaml',
+			"node_modules/**",
+			"build/**",
+			"dist/**",
+			"coverage/**",
+			".nyc_output/**",
+			"*.log",
+			"logs/**",
+			".DS_Store",
+			"Thumbs.db",
+			".env*",
+			".vscode/**",
+			".idea/**",
+			"*.swp",
+			"*.swo",
+			"*~",
+			"package-lock.json",
+			"yarn.lock",
+			"pnpm-lock.yaml",
 		],
 	},
-	// JavaScript files
+	// JavaScript files (ESM by default)
 	{
-		files: ['**/*.{js,mjs,cjs}'],
+		files: ["**/*.{js,mjs,cjs}"],
 		languageOptions: {
 			globals: { ...globals.browser, ...globals.node },
+			sourceType: "module",
 		},
 		rules: {
 			...js.configs.recommended.rules,
-			'no-unused-vars': ['error', { argsIgnorePattern: '^next$' }],
+			"no-unused-vars": ["error", { argsIgnorePattern: "^next$" }],
 		},
 	},
-	// CommonJS specific files
+	// CommonJS specific files (only if needed, e.g., for .cjs)
 	{
-		files: ['**/*.js'],
+		files: ["**/*.cjs"],
 		languageOptions: {
-			sourceType: 'commonjs',
+			sourceType: "commonjs",
 		},
 	},
 	// JSON files
 	{
-		files: ['**/*.json'],
+		files: ["**/*.json"],
 		plugins: { json },
-		language: 'json/json',
+		language: "json/json",
 		rules: {
 			...json.configs.recommended.rules,
 		},
 	},
 	// JSONC files
 	{
-		files: ['**/*.jsonc'],
+		files: ["**/*.jsonc"],
 		plugins: { json },
-		language: 'json/jsonc',
+		language: "json/jsonc",
 		rules: {
 			...json.configs.recommended.rules,
 		},
 	},
 	// JSON5 files
 	{
-		files: ['**/*.json5'],
+		files: ["**/*.json5"],
 		plugins: { json },
-		language: 'json/json5',
+		language: "json/json5",
 		rules: {
 			...json.configs.recommended.rules,
 		},
 	},
 	// Markdown files
 	{
-		files: ['**/*.md'],
+		files: ["**/*.md"],
 		plugins: { markdown },
-		language: 'markdown/gfm',
+		language: "markdown/gfm",
 		rules: {
 			...markdown.configs.recommended.rules,
 		},
 	},
 	// CSS files
 	{
-		files: ['**/*.css'],
+		files: ["**/*.css"],
 		plugins: { css },
-		language: 'css/css',
+		language: "css/css",
 		rules: {
 			...css.configs.recommended.rules,
 		},
