@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URI")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String
+  email     String   @unique
+  avatar    String?
+  role      Role     @default(BASIC)
+  credits   Int      @default(0)
+  videos    Video[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Video {
+  id               String      @id @default(uuid())
+  videoFile        String      @unique
+  user             User        @relation(fields: [userId], references: [id])
+  userId           String
+  uploadedAt       DateTime    @default(now())
+  scanResult       ScanResult?
+  originalFilename String?
+  fileSize         Int?
+  duration         Int?
+  format           String?
+
+  @@unique([id, userId])
+  @@index([userId])
+}
+
+model ScanResult {
+  id        String     @id @default(uuid())
+  status    ScanStatus @default(PENDING)
+  results   Json?
+  video     Video      @relation(fields: [videoId], references: [id])
+  videoId   String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([videoId])
+}
+
+enum Role {
+  BASIC
+  ADMIN
+  SUBSCRIBED
+}
+
+enum ScanStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
