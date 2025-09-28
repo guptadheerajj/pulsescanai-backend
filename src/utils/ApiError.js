@@ -7,6 +7,12 @@ class ApiError extends Error {
 		data = null,
 	}) {
 		super(message);
+		Object.defineProperty(this, "message", {
+			value: message,
+			enumerable: true,
+			writable: true,
+			configurable: true,
+		});
 		this.statusCode = statusCode;
 		this.errors = errors;
 		this.data = data;
