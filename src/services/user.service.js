@@ -59,8 +59,20 @@ const createUser = async ({ username, email, password }) => {
 	} catch (error) {
 		if (error.code === "P2002") {
 			const field = error.meta?.target[0];
+
+			let friendlyMessage = null;
+			if (field === "username") {
+				friendlyMessage =
+					"This username is already taken. Please choose a different username.";
+			} else if (field === "email") {
+				friendlyMessage =
+					"This email address is already registered. Please use a different email.";
+			} else {
+				friendlyMessage = `${field} already exists`;
+			}
+
 			throw new ApiError({
-				message: `${field} already exists`,
+				message: friendlyMessage,
 				statusCode: 409,
 			});
 		}
