@@ -33,13 +33,14 @@ const checkUserExistsByEmail = async email => {
 	}
 };
 
-const createUser = async ({ username, email, password }) => {
+const createUser = async ({ username, email, password, avatar = "" }) => {
 	const hash = await hashPassword(password);
 	try {
 		const user = await prisma.user.create({
 			data: {
 				username,
 				email,
+				avatar,
 				password: hash,
 				refreshToken: "",
 			},
