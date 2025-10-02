@@ -2,7 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { matchedData } from "express-validator";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
-import { generateTokens } from "../utils/jwt.js";
+import { generateTokens, verifyRefreshToken } from "../utils/jwt.js";
 import {
 	deleteOnCloudinaryWithPublicId,
 	uploadOnCloudinary,
@@ -10,13 +10,14 @@ import {
 import {
 	createUser,
 	getUserByEmail,
+	getUserById,
 	getUserByUsername,
 	resetRefreshToken,
 	setRefreshToken,
 	validatePassword,
 } from "../services/user.service.js";
 
-const registerUser = asyncHandler(async function (req, res, next) {
+const registerUser = asyncHandler(async (req, res) => {
 	const data = matchedData(req);
 
 	const cloudinaryResponse = await uploadOnCloudinary(req.file.path);
@@ -114,4 +115,56 @@ const logoutUser = asyncHandler(async (req, res) => {
 		);
 });
 
-export { registerUser, loginUser, logoutUser };
+const refreshAccessToken = asyncHandler(async (req, res) => {
+	const incomingRefreshToken =
+		req.cookies?.refreshToken || req.body.refreshToken || null;
+
+	if (!incomingRefreshToken) {
+		throw new ApiError({
+			message: "Invalid or expired refreshToken",
+			statusCode: 401,
+		});
+	}
+	try {
+		const decodedData = verifyRefreshToken(incomingRefreshToken);
+
+		if (!decodedData) {
+			throw new ApiError({
+				message: "Invalid or expired refreshToken",
+				statusCode: 401,
+			});
+		}
+
+		const user = await getUserById(decodedData?.id);
+
+		if (!user || (user && incomingRefreshToken !== user.refreshToken)) {
+			throw new ApiError({
+				message: "Invalid or expired refreshToken",
+				statusCode: 401,
+			});
+		}
+
+		const { refreshToken: newRefreshToken, accessToken } =
+			generateTokens(user);
+
+		const loggedInUser = await setRefreshToken(user.id, newRefreshToken);
+
+		const options = { httpOnly: true, secure: true };
+
+		res.status(200)
+			.cookie("accessToken", accessToken, options)
+			.cookie("refreshToken", newRefreshToken, options)
+			.json(
+				new ApiResponse({
+					message: "User validated successfully",
+					statusCode: 200,
+					data: { user: loggedInUser, newRefreshToken, accessToken },
+				}),
+			);
+	} catch (error) {
+		console.log("Error refreshing access token", error);
+		throw error;
+	}
+});
+
+export { registerUser, loginUser, logoutUser, refreshAccessToken };
