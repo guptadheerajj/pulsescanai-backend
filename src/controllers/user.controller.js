@@ -11,6 +11,7 @@ import {
 	createUser,
 	getUserByEmail,
 	getUserByUsername,
+	resetRefreshToken,
 	setRefreshToken,
 	validatePassword,
 } from "../services/user.service.js";
@@ -96,4 +97,21 @@ const loginUser = asyncHandler(async (req, res) => {
 		);
 });
 
-export { registerUser, loginUser };
+const logoutUser = asyncHandler(async (req, res) => {
+	const options = { httpOnly: true, secure: true };
+
+	await resetRefreshToken(req.currentUser.id);
+
+	return res
+		.status(200)
+		.clearCookie("refreshToken", options)
+		.clearCookie("accessToken", options)
+		.json(
+			new ApiResponse({
+				message: "User logged out successfully!",
+				statusCode: 200,
+			}),
+		);
+});
+
+export { registerUser, loginUser, logoutUser };

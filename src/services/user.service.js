@@ -186,7 +186,7 @@ const setRefreshToken = async (id, refreshToken) => {
 
 		throw new ApiError({
 			message: "Error setting the refreshToken",
-			statusCode: 401,
+			statusCode: 500,
 			errors: [error],
 		});
 	}
@@ -215,6 +215,23 @@ const validatePassword = async (password, hashedPassword) => {
 	}
 };
 
+const resetRefreshToken = async id => {
+	try {
+		await prisma.user.update({
+			where: { id },
+			data: { refreshToken: "" },
+		});
+	} catch (error) {
+		console.log("Set refresh Token error", error);
+
+		throw new ApiError({
+			message: "Error validating the refreshToken",
+			statusCode: 401,
+			errors: [error],
+		});
+	}
+};
+
 export {
 	checkUserExistsByUsername,
 	checkUserExistsByEmail,
@@ -225,4 +242,5 @@ export {
 	getUserByEmail,
 	validatePassword,
 	setRefreshToken,
+	resetRefreshToken,
 };
