@@ -40,4 +40,18 @@ const uploadOnCloudinary = async (localFilePath, options = {}) => {
 		return null;
 	}
 };
-export { uploadOnCloudinary };
+
+const deleteOnCloudinaryWithPublicId = async publicId => {
+	try {
+		await cloudinary.uploader.destroy(publicId);
+	} catch (error) {
+		console.log("Cloudinary delete error".error);
+		throw new ApiError({
+			message: "Error deleting the file on cloudinary",
+			statusCode: 500,
+			errors: [error],
+		});
+	}
+};
+
+export { uploadOnCloudinary, deleteOnCloudinaryWithPublicId };

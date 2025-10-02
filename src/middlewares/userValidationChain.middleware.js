@@ -4,7 +4,7 @@ const createUsernameChain = () =>
 	body("username")
 		.trim()
 		.notEmpty()
-		.withMessage("Please enter an email")
+		.withMessage("Please enter a username")
 		.isAlphanumeric()
 		.withMessage("Username must only contain alphnuemric characters")
 		.isLength({ min: 3, max: 15 })
@@ -34,4 +34,18 @@ const userValidationChain = [
 	createPasswordChain(),
 ];
 
-export { userValidationChain };
+const createLoginValidationChain = (req, res, next) => {
+	if (req.body.email) {
+		createEmailChain()(req, res, next);
+	} else {
+		createUsernameChain()(req, res, next);
+	}
+};
+
+export {
+	userValidationChain,
+	createEmailChain,
+	createPasswordChain,
+	createUsernameChain,
+	createLoginValidationChain,
+};

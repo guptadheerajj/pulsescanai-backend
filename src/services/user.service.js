@@ -97,6 +97,7 @@ const getUserById = async userId => {
 				credits: true,
 				createdAt: true,
 				updatedAt: true,
+				password: true,
 			},
 		});
 		return user;
@@ -122,6 +123,7 @@ const getUserByUsername = async username => {
 				credits: true,
 				createdAt: true,
 				updatedAt: true,
+				password: true,
 			},
 		});
 
@@ -131,6 +133,61 @@ const getUserByUsername = async username => {
 		throw new ApiError({
 			message: "Error checking username record",
 			statusCode: 500,
+		});
+	}
+};
+
+const getUserByEmail = async email => {
+	try {
+		const user = prisma.user.findUnique({
+			where: { email },
+			select: {
+				id: true,
+				username: true,
+				email: true,
+				avatar: true,
+				role: true,
+				credits: true,
+				createdAt: true,
+				updatedAt: true,
+				password: true,
+			},
+		});
+
+		return user;
+	} catch (error) {
+		console.log("Error checking email record, ", error);
+		throw new ApiError({
+			message: "Error checking email record",
+			statusCode: 500,
+		});
+	}
+};
+
+const setRefreshToken = async (id, refreshToken) => {
+	try {
+		return await prisma.user.update({
+			where: { id },
+			data: { refreshToken },
+			select: {
+				id: true,
+				username: true,
+				email: true,
+				avatar: true,
+				role: true,
+				credits: true,
+				createdAt: true,
+				updatedAt: true,
+				refreshToken: true,
+			},
+		});
+	} catch (error) {
+		console.log("Set refresh Token error", error);
+
+		throw new ApiError({
+			message: "Error setting the refreshToken",
+			statusCode: 401,
+			errors: [error],
 		});
 	}
 };
@@ -146,6 +203,18 @@ const hashPassword = async password => {
 	}
 };
 
+const validatePassword = async (password, hashedPassword) => {
+	try {
+		return await bcrypt.compare(password, hashedPassword);
+	} catch (error) {
+		console.log("Bcrypt error", error);
+		throw new ApiError({
+			message: "Error in validating password",
+			statusCode: 500,
+		});
+	}
+};
+
 export {
 	checkUserExistsByUsername,
 	checkUserExistsByEmail,
@@ -153,4 +222,7 @@ export {
 	getUserById,
 	getUserByUsername,
 	hashPassword,
+	getUserByEmail,
+	validatePassword,
+	setRefreshToken,
 };
