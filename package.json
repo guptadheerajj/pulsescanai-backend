@@ -36,6 +36,7 @@
 		"prisma": "^6.16.2"
 	},
 	"dependencies": {
+		"@gradio/client": "^1.19.1",
 		"@prisma/client": "^6.16.2",
 		"bcrypt": "^6.0.0",
 		"cloudinary": "^2.7.0",

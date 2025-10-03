@@ -18,8 +18,10 @@ app.use(cookieParser());
 
 // router imports
 import userRouter from "./routes/v1/user.route.js";
+import videoRouter from "./routes/v1/video.route.js";
 
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/video", videoRouter);
 
 // global error handler
 app.use((err, req, res, next) => {
